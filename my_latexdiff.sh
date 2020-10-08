@@ -70,17 +70,24 @@ echo "diff filename set to $DIFFFILE"
 
 ## Main latexdiff call
 echo "Running latexdiff with command:"
-set -x
 if [[ $DISABLE_CITATION_MARKUP ]]; then
     if [[ $NO_TABLES ]]; then
+        CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --disable-citation-markup --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
+        set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
     else
+        CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --disable-citation-markup --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
+        set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
     fi
 else
     if [[ $NO_TABLES ]]; then
+        CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
+        set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
     else
+        CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
+        set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
     fi
 fi
@@ -109,5 +116,8 @@ if [[ $COMPILE ]]; then
         fi
     fi
 fi
+
+echo "Ran with call:"
+echo $CALL
 
 exit 0
