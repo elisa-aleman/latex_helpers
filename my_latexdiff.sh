@@ -20,7 +20,13 @@ parser.add_argument('-v', '--view', action='store_true',
                     default=True, help='Open the PDF at end of compile. [default %(default)s]')
 parser.add_argument('-c', '--clean', action='store_true',
                     default=True, help='Clean latex secondary files [default %(default)s]')
+parser.add_argument('--graphics-markup', default="new-only", type=str,
+                    help='''latexdiff argument pass. Change highlight style for graphics embedded with \includegraphics commands. Check latexdiff -h for more info. [default %(default)s]''')
+parser.add_argument('--math-markup', default="coarse", type=str,
+                    help='''latexdiff argument pass. Determine granularity of markup in displayed math environments. Check latexdiff -h for more info. [default %(default)s]''')
 EOF
+
+# Getting filenames and version names
 
 NEWDOCNAME="${NEWFILE%.*}"
 OLDDOCNAME="${OLDFILE%.*}"
@@ -53,8 +59,19 @@ fi
 DIFFFILE="V${OLDV}--V${NEWV}-diff_${DIFFENDNAME}.tex"
 echo "diff filename set to $DIFFFILE"
 
-echo 'Running latexdiff -t UNDERLINE --graphics-markup="none" --math-markup="whole" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE'
-latexdiff -t UNDERLINE --graphics-markup="none" --math-markup="whole" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+
+## Main latexdiff call
+echo "Running latexdiff with command:"
+set -x
+latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+set +x
+
+if [ $? -ne 0 ]; then
+    echo "Latexdiff error. Check log."
+    exit 1
+fi
+
+## Main latexcompile.sh call
 
 if [[ $COMPILE ]]; then
     echo "Compiling with '$(dirname $0)/latexcompile.sh'"
