@@ -10,20 +10,24 @@ parser.add_argument('-n', '--newversion', default="2", type=str,
                     help='Version number of the new file. [default %(default)s]')
 parser.add_argument('-o', '--oldversion', default="1", type=str,
                     help='Version number of the new file. [default %(default)s]')
-parser.add_argument('-s', '--setdiffendname', action='store_true',
+parser.add_argument('--setdiffendname', action='store_true',
                     default=False, help='Use provided --diffendname. [default %(default)s]')
-parser.add_argument('-d', '--diffendname', default="paper", type=str,
+parser.add_argument('--diffendname', default="paper", type=str,
                     help='Name of the project to append at end of the diff file. [default %(default)s]')
-parser.add_argument('-m', '--compile', action='store_true',
+parser.add_argument('-m', '--compile', '--make', action='store_true',
                     default=True, help='Compile with latexcompile.sh [default %(default)s]')
 parser.add_argument('-v', '--view', action='store_true',
                     default=True, help='Open the PDF at end of compile. [default %(default)s]')
 parser.add_argument('-c', '--clean', action='store_true',
                     default=True, help='Clean latex secondary files [default %(default)s]')
 parser.add_argument('--graphics-markup', default="new-only", type=str,
-                    help='''latexdiff argument pass. Change highlight style for graphics embedded with \includegraphics commands. Check latexdiff -h for more info. [default %(default)s]''')
+                    help='latexdiff argument pass. Change highlight style for graphics embedded with \includegraphics commands. Check latexdiff -h for more info. [default %(default)s]')
 parser.add_argument('--math-markup', default="coarse", type=str,
-                    help='''latexdiff argument pass. Determine granularity of markup in displayed math environments. Check latexdiff -h for more info. [default %(default)s]''')
+                    help='latexdiff argument pass. Determine granularity of markup in displayed math environments. Check latexdiff -h for more info. [default %(default)s]')
+parser.add_argument('-d','--disable-citation-markup', '--disable-auto-mbox', dest='auto-mbox', action='store_true',
+                    default=True, help='Supress citation markup and markup of other vulnerable commands in styles using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR) (the two options are identical and are simply aliases) [default %(default)s]')
+parser.add_argument('-e', '--enable-citation-markup', '--enable-auto-mbox', dest='auto-mbox', action='store_false',
+                    help='Enables back the citation auto-mbox behavior, which is disabled by default in my code')
 EOF
 
 # Getting filenames and version names
@@ -63,7 +67,11 @@ echo "diff filename set to $DIFFFILE"
 ## Main latexdiff call
 echo "Running latexdiff with command:"
 set -x
-latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+if [[ $DISABLE_CITATION_MARKUP ]]; then
+    latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+else
+    latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+fi
 set +x
 
 if [ $? -ne 0 ]; then
