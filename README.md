@@ -73,12 +73,21 @@ I like to use these files to do my LaTeX work faster. For example to view my cur
 A problem I kept running into with *latexdiff* is that I like to have a very specific naming system. All my older files have an `_V#-#` ending marking the version. For example, version 1.1 and 2.0 of my `paper.tex` (just an example, it can be named whatever you like) would be `paper_V1-1.tex` and `paper_V2.tex` respectively. I like to name my *latexdiff* '.tex' files as `V{old#}--V{new#}-diff_paper.tex`. It was a pain to write this format every time, so I programmed it so that the version and the name of the paper would be extracted automatically and all you need to provide is the old and the new file, and a few flags if I wanted.
 
 As I said, I used to have trouble running *latexdiff* on my papers and having it crash because of tables, longtables, section titles, footnotes or long citations. So inside `my_latexdiff.sh` I'm running it with the following options:
-##
+
+#### Latexdiff options
 ```
 latexdiff -t UNDERLINE --graphics-markup="none" --math-markup="whole" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
 ```
 
 You can edit this main part of the code if you need other options. I'll provide flags in the future to enable or disable a few of these hard set options, but this is how my latexdiff files stopped crashing when compiling.
+
+As a general rule:
+
+`--exclude-textcmd` is used to avoid making diff checks to text commands like section or footnote, but you can add your own by editing the .sh file directly.
+
+`--config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*"` is currently avoiding pictures, tables, longtables, and latexdiff's DIFnomarkup environment. This will avoid marking any of the specified environments that use `\begin{env_name}` and `\end{env_name}`. To add more, inside the parenthesis where picture and table are, just write `|{env_name}` to add an environment. Just remember to replace {env_name} with the name of the environment.
+
+#### Running my_latexdiff.sh
 
 Since I use git and I'd like my most recent version to stay with the simple name I chose first. In this example it would be `paper.tex`, but you can name it whatever and the program will take that name for the diff file too. Since I'm using this simple name, I need to pass the version number of the older file as a flag, and to rename the older version so it has the version in the filename. This is what I like to do, but technically you can use any combination of flags or filename.
 
