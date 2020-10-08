@@ -28,6 +28,10 @@ parser.add_argument('-d','--disable-citation-markup', '--disable-auto-mbox', des
                     default=True, help='Supress citation markup and markup of other vulnerable commands in styles using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR) (the two options are identical and are simply aliases) [default %(default)s]')
 parser.add_argument('-e', '--enable-citation-markup', '--enable-auto-mbox', dest='auto-mbox', action='store_false',
                     help='Enables back the citation auto-mbox behavior, which is disabled by default in my code')
+parser.add_argument('--no-tables', dest='table-mode', action='store_true',
+                    default=True, help='Avoids marking diff on tables and longtables [default %(default)s]')
+parser.add_argument('-t', '--enable-tables', dest='table-mode', action='store_false',
+                    help='Enables back the latexdiff marking on tables, which is disabled by default in my code')
 EOF
 
 # Getting filenames and version names
@@ -68,9 +72,17 @@ echo "diff filename set to $DIFFFILE"
 echo "Running latexdiff with command:"
 set -x
 if [[ $DISABLE_CITATION_MARKUP ]]; then
-    latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    if [[ $NO_TABLES ]]; then
+        latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    else
+        latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    fi
 else
-    latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    if [[ $NO_TABLES ]]; then
+        latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    else
+        latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+    fi
 fi
 set +x
 
