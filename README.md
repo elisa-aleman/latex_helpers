@@ -72,20 +72,22 @@ I like to use these files to do my LaTeX work faster. For example to view my cur
 
 A problem I kept running into with *latexdiff* is that I like to have a very specific naming system. All my older files have an `_V#-#` ending marking the version. For example, version 1.1 and 2.0 of my `paper.tex` (just an example, it can be named whatever you like) would be `paper_V1-1.tex` and `paper_V2.tex` respectively. I like to name my *latexdiff* '.tex' files as `V{old#}--V{new#}-diff_paper.tex`. It was a pain to write this format every time, so I programmed it so that the version and the name of the paper would be extracted automatically and all you need to provide is the old and the new file, and a few flags if I wanted.
 
-As I said, I used to have trouble running *latexdiff* on my papers and having it crash because of tables, longtables, section titles, footnotes or long citations. So inside `my_latexdiff.sh` I'm running it with the following options:
+As I said, I used to have trouble running *latexdiff* on my papers and having it crash because of tables, longtables, section titles, footnotes or long citations. So the default behavior is as follows:
 
-#### Latexdiff options
-```
-latexdiff -t UNDERLINE --graphics-markup="none" --math-markup="whole" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
-```
+- only pictures are surrounded by a blue marquee
+- differences in the math are level 2 (detects changes within equations, but not minor changes)
+- citations aren't marked for differences (boxes break the page width sometimes, so I disabled it)
+- tables and longtables aren't marked for differences
+- footnotes and sections aren't marked for differences
 
-You can edit this main part of the code if you need other options. I'll provide flags in the future to enable or disable a few of these hard set options, but this is how my latexdiff files stopped crashing when compiling.
+However, I made a few flags to help with the *latexdiff* options:
 
-As a general rule:
+- `--graphics-markup` can be passed directly to *latexdiff*
+- `math-markup` can be passed directly to *latexdiff*
+- `'-e', '--enable-citation-markup', '--enable-auto-mbox'` can be used to revert the citations to being marked
+- `'-t', '--enable-tables'` can be used to revert the tables to being marked
 
-`--exclude-textcmd` is used to avoid making diff checks to text commands like section or footnote, but you can add your own by editing the .sh file directly.
-
-`--config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*"` is currently avoiding pictures, tables, longtables, and latexdiff's DIFnomarkup environment. This will avoid marking any of the specified environments that use `\begin{env_name}` and `\end{env_name}`. To add more, inside the parenthesis where picture and table are, just write `|{env_name}` to add an environment. Just remember to replace {env_name} with the name of the environment.
+Until now, I've had only trouble with sections and footnotes, so I haven't put up flags to activate them again. If necessary, you can edit the main code to activate them again.
 
 #### Running my_latexdiff.sh
 
@@ -106,6 +108,7 @@ Then I'd run `my_latexdiff.sh` as such:
 `--compile` will run `latexcompile.sh` on the diff file, `--view` will open the file after finishing and `--clean` will remove the secondary files of the diff files.
 
 `--newversion="2"` is a string, so it can be "2-5" or anything you'd like. If the old version also doesn't have the number on the filename you can set it with `--oldversion`. `--oldversion` defaults to `1` and `--newversion` defaults to `2`.
+
 
 ### Clean LaTeX secondary files
 
@@ -166,6 +169,57 @@ Because I leave my executable files in the root folder, and my programs use the 
 cd 1_manuscript
 ../latexcompile.sh paper.tex --clean --view
 ../my_latexdiff.sh paper_V1-1.tex paper.tex --newversion="2" --compile --view --clean
+```
+
+### Manual *latexdiff* options
+
+In `my_latexdiff.sh`, the default behavior is as follows:
+
+```
+latexdiff -t UNDERLINE --graphics-markup="new-only" --math-markup="coarse" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
+```
+
+You can use the flags as explained above, but if you need more options, as a general rule:
+
+`--exclude-textcmd` is used to avoid making diff checks to text commands like section or footnote, but you can add your own by editing the .sh file directly.
+
+`--config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*"` is currently avoiding pictures, tables, longtables, and latexdiff's DIFnomarkup environment. This will avoid marking any of the specified environments that use `\begin{env_name}` and `\end{env_name}`. To add more, inside the parenthesis where picture and table are, just write `|{env_name}` to add an environment. Just remember to replace {env_name} with the name of the environment.
+
+`--graphics-markup`, `--math-markup` and `--disable-citation-markup` are just normal options for latexdiff, with the following effects as per the help section of *latexdiff*:
+
+```
+--graphics-markup=level   Change highlight style for graphics embedded with \includegraphics commands
+                      Possible values for level:
+                      none,off or 0: no highlighting for figures
+                      new-only or 1: surround newly added or changed figures with a blue frame [Default]
+                      both or 2:     highlight new figures with a blue frame and show deleted figures
+                                at reduced scale, and crossed out with a red diagonal cross. Use configuration
+                                variable SCALEDELGRAPHICS to set size of deleted figures.
+                      Note that changes to the optional parameters will make the figure appear as changed
+                      to latexdiff, and this figure will thus be highlighted.
+
+--math-markup=level    Determine granularity of markup in displayed math environments:
+                      Possible values for level are (both numerical and text labels are acceptable):
+                      off or 0: suppress markup for math environments.  Deleted equations will not
+                               appear in diff file. This mode can be used if all the other modes
+                               cause invalid latex code.
+                      whole or 1: Differencing on the level of whole equations. Even trivial changes
+                               to equations cause the whole equation to be marked changed.  This
+                               mode can be used if processing in coarse or fine mode results in
+                               invalid latex code.
+                      coarse or 2: Detect changes within equations marked up with a coarse
+                               granularity; changes in equation type (e.g.displaymath to equation)
+                               appear as a change to the complete equation. This mode is recommended
+                               for situations where the content and order of some equations are still
+                               being changed. [Default]
+                      fine or 3: Detect small change in equations and mark up and fine granularity.
+                               This mode is most suitable, if only minor changes to equations are
+                               expected, e.g. correction of typos.
+
+--disable-citation-markup
+--disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles
+                       using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+                       (the two options are identical and are simply aliases)
 ```
 
 ---
