@@ -24,13 +24,13 @@ parser.add_argument('--graphics-markup', default="new-only", type=str,
                     help='latexdiff argument pass. Change highlight style for graphics embedded with \includegraphics commands. Check latexdiff -h for more info. [default %(default)s]')
 parser.add_argument('--math-markup', default="coarse", type=str,
                     help='latexdiff argument pass. Determine granularity of markup in displayed math environments. Check latexdiff -h for more info. [default %(default)s]')
-parser.add_argument('-d','--disable-citation-markup', '--disable-auto-mbox', dest='auto-mbox', action='store_true',
+parser.add_argument('-d','--disable-citation-markup', '--disable-auto-mbox', dest='AUTO_MBOX', action='store_true',
                     default=True, help='Supress citation markup and markup of other vulnerable commands in styles using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR) (the two options are identical and are simply aliases) [default %(default)s]')
-parser.add_argument('-e', '--enable-citation-markup', '--enable-auto-mbox', dest='auto-mbox', action='store_false',
+parser.add_argument('-e', '--enable-citation-markup', '--enable-auto-mbox', dest='AUTO_MBOX', action='store_false',
                     help='Enables back the citation auto-mbox behavior, which is disabled by default in my code')
-parser.add_argument('--no-tables', dest='table-mode', action='store_true',
+parser.add_argument('--no-tables', dest='TABLE_MODE', action='store_true',
                     default=True, help='Avoids marking diff on tables and longtables [default %(default)s]')
-parser.add_argument('-t', '--enable-tables', dest='table-mode', action='store_false',
+parser.add_argument('-t', '--enable-tables', dest='TABLE_MODE', action='store_false',
                     help='Enables back the latexdiff marking on tables, which is disabled by default in my code')
 EOF
 
@@ -70,8 +70,8 @@ echo "diff filename set to $DIFFFILE"
 
 ## Main latexdiff call
 echo "Running latexdiff with command:"
-if [[ $DISABLE_CITATION_MARKUP ]]; then
-    if [[ $NO_TABLES ]]; then
+if [[ $AUTO_MBOX ]]; then
+    if [[ $TABLE_MODE ]]; then
         CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --disable-citation-markup --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
         set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
@@ -81,7 +81,7 @@ if [[ $DISABLE_CITATION_MARKUP ]]; then
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --disable-citation-markup --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
     fi
 else
-    if [[ $NO_TABLES ]]; then
+    if [[ $TABLE_MODE ]]; then
         CALL="latexdiff -t UNDERLINE --graphics-markup=\"$GRAPHICS_MARKUP\" --math-markup=\"$MATH_MARKUP\" --exclude-textcmd=\"section\" --exclude-textcmd=\"section\*\" --exclude-textcmd=\"footnote\" --config=\"PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*\" $OLDFILE $NEWFILE > $DIFFFILE"
         set -x
         latexdiff -t UNDERLINE --graphics-markup="$GRAPHICS_MARKUP" --math-markup="$MATH_MARKUP" --exclude-textcmd="section" --exclude-textcmd="section\*" --exclude-textcmd="footnote" --config="PICTUREENV=(?:picture|DIFnomarkup|table|longtable)[\w\d*@]*" $OLDFILE $NEWFILE > $DIFFFILE
