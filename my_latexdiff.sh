@@ -15,11 +15,11 @@ parser.add_argument('--setdiffendname', action='store_true',
 parser.add_argument('--diffendname', default="paper", type=str,
                     help='Name of the project to append at end of the diff file. [default %(default)s]')
 parser.add_argument('-m', '--compile', '--make', action='store_true',
-                    default=True, help='Compile with latexcompile.sh [default %(default)s]')
+                    default=False, help='Compile with latexcompile.sh [default %(default)s]')
 parser.add_argument('-v', '--view', action='store_true',
-                    default=True, help='Open the PDF at end of compile. [default %(default)s]')
+                    default=False, help='Open the PDF at end of compile. [default %(default)s]')
 parser.add_argument('-c', '--clean', action='store_true',
-                    default=True, help='Clean latex secondary files [default %(default)s]')
+                    default=False, help='Clean latex secondary files [default %(default)s]')
 parser.add_argument('--graphics-markup', default="new-only", type=str,
                     help='latexdiff argument pass. Change highlight style for graphics embedded with \includegraphics commands. Check latexdiff -h for more info. [default %(default)s]')
 parser.add_argument('--math-markup', default="coarse", type=str,
