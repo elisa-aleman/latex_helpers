@@ -21,3 +21,8 @@ find . -name '*.thm' -type f -delete
 find . -name '*.out' -type f -delete
 find . -name '*.spl' -type f -delete
 find . -name '*.gz' -type f -delete
+find . -name '*.toc' -type f -delete
+find . -name '*.lof' -type f -delete
+find . -name '*.lot' -type f -delete
+find . -name '*.run.xml' -type f -delete
+find . -name '*-blx.bib' -type f -delete
