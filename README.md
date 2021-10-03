@@ -12,22 +12,22 @@ By dependency, and according to nhoffman:
 
 ## Installation
 
-In short, download all the files, move them to the directory where your '*.tex' file is and make the scripts executable.
+In short, download all the files, move them to the directory where your '\*.tex' file is and make the scripts executable.
 
 Long version:
 
 Get `argparse.bash`:
 
 ```
-wget https://raw.githubusercontent.com/nhoffman/argparse-bash/master/argparse.bash
+wget https://raw.githubusercontent.com/nhoffman/argparse-bash/main/argparse.bash
 chmod +x argparse.bash
 ```
 
 Then do the same for my files as well:
 ```
-wget https://github.com/elisa-aleman/latex_helpers/raw/master/latexcompile.sh
-wget https://github.com/elisa-aleman/latex_helpers/raw/master/mylatexdiff.sh
-wget https://github.com/elisa-aleman/latex_helpers/raw/master/recursive_clean_latex_secondary_files.sh
+wget https://github.com/elisa-aleman/latex_helpers/raw/main/latexcompile.sh
+wget https://github.com/elisa-aleman/latex_helpers/raw/main/mylatexdiff.sh
+wget https://github.com/elisa-aleman/latex_helpers/raw/main/recursive_clean_latex_secondary_files.sh
 chmod +x latexcompile.sh
 chmod +x mylatexdiff.sh
 chmod +x recursive_clean_latex_secondary_files.sh
@@ -63,10 +63,10 @@ Then install homebrew using proxy settings as well:
 I like to use these files to do my LaTeX work faster. For example to view my current progress in PDF:
 
 ```
-./latexcompile.sh paper.tex --view --clean
+./latexcompile.sh paper.tex --view --clean --leavebbl
 ```
 
-`--view` will open the pdf after all citations have been read with bibtex and `--clean` will remove all the secondary files that pdflatex makes, like '.blg', '.bbl', '.aux', '.log', '.thm', '.out', and sometimes '.spl' when using the class *elsarticle* from Elsevier.
+`--view` will open the pdf after all citations have been read with bibtex and `--clean` will remove all the secondary files that pdflatex makes, like '.blg', '.bbl', '.aux', '.log', '.thm', '.out', and sometimes '.spl' when using the class *elsarticle* from Elsevier. `--leavebbl` will stop `--clean` from deleting the '.bbl' file, which is useful for arxiv uploads or to count bibliography. However it's not always needed so I still left it in `--clean`
 
 ### Making *latexdiff* easier
 
