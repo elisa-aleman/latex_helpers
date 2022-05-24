@@ -16,17 +16,8 @@ parser.add_argument('-b', '--leavebbl', action='store_true',
                     default=False, help='Clean latex secondary files but leave .bbl alone (useful for arxiv)[default %(default)s]')
 EOF
 DOCNAME="${INFILE%.*}"
-if [[ $ONLYCLEAN ]];
+if ! [[ $ONLYCLEAN ]];
 then
-    if [[ $LEAVEBBL ]];
-    then
-        echo "Removing secondary files except .bbl, no compile made"
-        rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib
-    else
-        echo "Removing secondary files, no compile made"
-        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
-    fi
-else
     if [[ $NOBIB ]];
     then
         pdflatex $DOCNAME.tex
@@ -49,16 +40,16 @@ else
         pdflatex $DOCNAME.tex
         pdflatex $DOCNAME.tex
     fi
-    if [[ $CLEAN ]];
+fi
+if [[ $CLEAN ]] || [[ $ONLYCLEAN ]];
+then
+    if [[ $LEAVEBBL ]];
     then
-        if [[ $LEAVEBBL ]];
-        then
-            echo "Removing secondary files except .bbl"
-            rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
-        else
-            echo "Removing secondary files"
-            rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
-        fi
+        echo "Removing secondary files except .bbl"
+        rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
+    else
+        echo "Removing secondary files"
+        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
     fi
 fi
 if [[ $VIEW ]];
