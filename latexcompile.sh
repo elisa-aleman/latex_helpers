@@ -63,6 +63,14 @@ else
 fi
 if [[ $VIEW ]];
 then
-    open $DOCNAME.pdf
+    case "$OSTYPE" in
+      solaris*) xdg-open $DOCNAME.pdf ;;
+      darwin*)  open $DOCNAME.pdf ;; 
+      linux*)   xdg-open $DOCNAME.pdf ;;
+      bsd*)     xdg-open $DOCNAME.pdf ;;
+      msys*)    start $DOCNAME.pdf;;
+      cygwin*)  start $DOCNAME.pdf;;
+      *)        echo "unknown: $OSTYPE" ;;
+    esac
 fi
 exit 0
