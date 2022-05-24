@@ -29,7 +29,7 @@ then
         echo "Skipping Bibtex from compile."
     else
         echo "Removing secondary files, starting from scratch"
-        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
+        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
         pdflatex $DOCNAME.tex
         if [ $? -ne 0 ];
         then
@@ -46,10 +46,10 @@ then
     if [[ $LEAVEBBL ]];
     then
         echo "Removing secondary files except .bbl"
-        rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
+        rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
     else
         echo "Removing secondary files"
-        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib 
+        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
     fi
 fi
 if [[ $VIEW ]];
