@@ -23,7 +23,12 @@ if ! [[ $ONLYCLEAN ]];
 then
     if [[ $NOBIB ]];
     then
-        pdflatex $DOCNAME.tex
+        if [[ $XELATEX ]];
+        then
+            xelatex $DOCNAME.tex
+        else
+            pdflatex $DOCNAME.tex
+        fi
         if [ $? -ne 0 ];
         then
             echo "Compilation error. Check log."
@@ -32,12 +37,8 @@ then
         echo "Skipping Bibtex from compile."
     else
         echo "Removing secondary files, starting from scratch"
-        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.gz  
-        rm $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.maf $DOCNAME.mtc
-        rm $DOCNAME.mtc0 $DOCNAME.mtc1 $DOCNAME.mtc2 $DOCNAME.mtc3 $DOCNAME.mtc4 $DOCNAME.mtc5 $DOCNAME.mtc6 $DOCNAME.mtc7 $DOCNAME.mtc8 $DOCNAME.mtc9
-        rm $DOCNAME.bcf $DOCNAME.run.xml $DOCNAME-blx.bib
-        find . -name '*.aux' -type f -delete
-
+        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
+        
         if [[ $XELATEX ]];
         then
             xelatex $DOCNAME.tex
@@ -68,18 +69,10 @@ then
     if [[ $LEAVEBBL ]];
     then
         echo "Removing secondary files except .bbl"
-        rm $DOCNAME.blg $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.gz 
-        rm $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.maf $DOCNAME.mtc
-        rm $DOCNAME.mtc0 $DOCNAME.mtc1 $DOCNAME.mtc2 $DOCNAME.mtc3 $DOCNAME.mtc4 $DOCNAME.mtc5 $DOCNAME.mtc6 $DOCNAME.mtc7 $DOCNAME.mtc8 $DOCNAME.mtc9
-        rm $DOCNAME.bcf $DOCNAME.run.xml $DOCNAME-blx.bib
-        find . -name '*.aux' -type f -delete
+        rm $DOCNAME.blg $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
     else
         echo "Removing secondary files"
-        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.gz 
-        rm $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.maf $DOCNAME.mtc
-        rm $DOCNAME.mtc0 $DOCNAME.mtc1 $DOCNAME.mtc2 $DOCNAME.mtc3 $DOCNAME.mtc4 $DOCNAME.mtc5 $DOCNAME.mtc6 $DOCNAME.mtc7 $DOCNAME.mtc8 $DOCNAME.mtc9
-        rm $DOCNAME.bcf $DOCNAME.run.xml $DOCNAME-blx.bib
-        find . -name '*.aux' -type f -delete
+        rm $DOCNAME.blg $DOCNAME.bbl $DOCNAME.aux $DOCNAME.log $DOCNAME.thm $DOCNAME.out $DOCNAME.spl $DOCNAME.toc $DOCNAME.lof $DOCNAME.lot $DOCNAME.run.xml $DOCNAME-blx.bib $DOCNAME.maf $DOCNAME.mtc $DOCNAME.mtc0 
     fi
 fi
 if [[ $VIEW ]];
