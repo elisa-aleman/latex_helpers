@@ -26,7 +26,9 @@ then
         if [[ $XELATEX ]];
         then
             xelatex $DOCNAME.tex
+            xelatex $DOCNAME.tex
         else
+            pdflatex $DOCNAME.tex
             pdflatex $DOCNAME.tex
         fi
         if [ $? -ne 0 ];
